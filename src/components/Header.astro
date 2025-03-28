@@ -1,0 +1,83 @@
+---
+// Header.astro
+---
+
+<header class="w-full fixed top-0 transition-all duration-300 z-20">
+    <div
+        id="header-element"
+        class="w-[1200px] h-20 mx-auto mt-10 py-4 px-8 align-middle rounded-2xl transition-all ease-in-out duration-300"
+    >
+        <div class="flex h-full flex-row justify-between items-center">
+            <a class="h-8 w-auto" href="/">
+                <img
+                    class="h-full"
+                    src="/bastion-logo-white.png"
+                    alt="bastion logo"
+                />
+            </a>
+            <nav
+                class="flex flex-row dark:text-neutral-200 gap-14 items-center"
+            >
+                <ul class="flex flex-row gap-7 transition-colors ease-in-out">
+                    <li class="hover:text-white transition-colors ease-in-out">
+                        <a href="/product">Product</a>
+                    </li>
+                    <li class="hover:text-white transition-colors ease-in-out">
+                        <a href="/docs">Docs</a>
+                    </li>
+                    <li class="hover:text-white transition-colors ease-in-out">
+                        <a href="/faq">FAQ</a>
+                    </li>
+                    <li class="hover:text-white transition-colors ease-in-out">
+                        <a href="/about">About</a>
+                    </li>
+                </ul>
+                <ul class="flex flex-row gap-3">
+                    <li>
+                        <a
+                            class="border-2 rounded-md px-4 py-2 hover:border-white hover:text-white transition-colors ease-in-out"
+                            href="/demo">Demo</a
+                        >
+                    </li>
+                    <li>
+                        <a
+                            class="border-2 dark:border-neutral-200 rounded-md px-4 py-2 dark:bg-neutral-200 dark:text-off-black hover:border-white hover:bg-white transition-colors ease-in-out"
+                            href="">Log In</a
+                        >
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const header = document.getElementById("header-element");
+        let ticking = false;
+
+        const handleScroll = () => {
+            if (!ticking) {
+                requestAnimationFrame(() => {
+                    const scrolled = window.scrollY > 0;
+                    if (!header) {
+                        console.error("Element 'HEADER' does not exist!");
+                    } else {
+                        header.classList.toggle(
+                            "bg-[rgba(100,100,100,0.2)]",
+                            scrolled
+                        );
+                        header.classList.toggle("drop-shadow-lg", scrolled);
+                        header.classList.toggle("backdrop-blur-2xl", scrolled);
+                        header.classList.toggle("backdrop-blur-xl", !scrolled);
+                    }
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        };
+
+        window.addEventListener("scroll", handleScroll, { passive: true });
+        handleScroll();
+    });
+</script>

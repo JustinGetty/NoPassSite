@@ -1,0 +1,13 @@
+---
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import BaseLayout from "./BaseLayout.astro";
+---
+
+<BaseLayout>
+    <Header />
+    <main class="items-center mt-64 mb-20 w-[1100px] mx-auto min-h-full">
+        <slot />
+    </main>
+    <Footer />
+</BaseLayout>

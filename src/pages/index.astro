@@ -1,11 +1,136 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import MainLayout from "../layouts/MainLayout.astro";
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<MainLayout>
+    <style>
+        @keyframes blinkCursor {
+            50% {
+                opacity: 0;
+            }
+        }
+    </style>
+
+    <div class="mt-20">
+        <div>
+            <div aria-hidden="true">
+                <div
+                    class="text-off-black dark:text-white text-8xl font-[600] flex flex-row items-center"
+                >
+                    <p
+                        class="mr-6 dark:drop-shadow-[0_0_100px_rgba(255,255,255,0.5)]"
+                    >
+                        No more
+                    </p>
+                    <div class="typing-container">
+                        <span
+                            id="typed-text"
+                            class="text-[#4d55cc] drop-shadow-[0_0_100px_rgba(77,85,204)]"
+                        ></span>
+                    </div>
+                    <div
+                        class="h-24 w-1 bg-off-black dark:bg-white animate-blinkCursor"
+                    >
+                    </div>
+                    <span>.</span>
+                </div>
+            </div>
+            <div
+                class="w-full text-white text-2xl px-1 py-2 font-[500] tracking-wide"
+            >
+                <p>
+                    Welcome to the future of secure, passwordless user
+                    authentication.
+                </p>
+            </div>
+        </div>
+        <div class="mt-48 w-full grid grid-cols-2 gap-6">
+            <div class="h-64 w-full bg-[rgba(100,100,100,0.3)] rounded-lg">
+            </div>
+            <div class="h-64 w-full bg-[rgba(100,100,100,0.3)] rounded-lg">
+            </div>
+            <div class="h-64 w-full bg-[rgba(100,100,100,0.3)] rounded-lg">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Words to cycle through
+        const words = ["Passwords", "Forgetting", "Stolen Creds"];
+        const typedTextElement = document.getElementById("typed-text");
+        let wordIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        let typingSpeed = 150; // Base speed in milliseconds
+        let firstLetterDeleted = false;
+
+        function typeEffect() {
+            if (!typedTextElement) {
+                console.error("Element with ID 'typed-text' not found.");
+                return;
+            }
+
+            const currentWord = words[wordIndex];
+
+            if (isDeleting) {
+                // Deleting state
+                typedTextElement.textContent = currentWord.substring(
+                    0,
+                    charIndex - 1
+                );
+                charIndex--;
+
+                // Special delay after first letter is deleted
+                if (charIndex === currentWord.length - 1) {
+                    firstLetterDeleted = true;
+                    // Randomly decide whether to add the delay
+                    const randomNumber = Math.floor(Math.random() * 10); // Generate a random number from 0-9
+                    if (randomNumber % 2 === 0) {
+                        // Check if even
+                        typingSpeed = 800; // Delay after first letter deletion
+                        console.log("Adding delay for word: " + currentWord);
+                    } else {
+                        typingSpeed = 80; // No delay, continue at regular deletion speed
+                        console.log("Skipping delay for word: " + currentWord);
+                    }
+                } else {
+                    typingSpeed = 80; // Regular deletion speed
+                }
+            } else {
+                // Typing state
+                typedTextElement.textContent = currentWord.substring(
+                    0,
+                    charIndex + 1
+                );
+                charIndex++;
+                typingSpeed = 150; // Normal typing speed
+            }
+
+            // Switch between typing and deleting
+            if (!isDeleting && charIndex === currentWord.length) {
+                // Finished typing, start deleting after pause
+                isDeleting = true;
+                firstLetterDeleted = false;
+                typingSpeed = 1500; // Pause at the end of word
+            } else if (isDeleting && charIndex === 0) {
+                // Finished deleting, start typing next word
+                isDeleting = false;
+                wordIndex = (wordIndex + 1) % words.length;
+                typingSpeed = 500; // Pause before typing next word
+            }
+
+            setTimeout(typeEffect, typingSpeed);
+        }
+
+        // Start the typing effect after a brief delay on page load
+        setTimeout(() => {
+            if (!typedTextElement) {
+                console.error("No typed text element found.");
+            } else {
+                typedTextElement.textContent = "";
+                charIndex = 0;
+                typeEffect();
+            }
+        }, 1000);
+    </script>
+</MainLayout>

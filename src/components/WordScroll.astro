@@ -1,0 +1,75 @@
+---
+// Word Scroll Animation Component
+// Place this file in your components directory
+---
+
+<div class="sentence">
+    <span>I love </span>
+    <div class="word-container">
+        <div class="word-scroll" id="wordScroll">
+            <span class="word">coding</span>
+            <span class="word">designing</span>
+            <span class="word">building</span>
+            <span class="word">creating</span>
+            <span class="word">coding</span>
+            <!-- Repeat first word to make the loop seamless -->
+        </div>
+    </div>
+    <span> websites.</span>
+</div>
+
+<style>
+    .sentence {
+        display: flex;
+        align-items: center;
+        font-size: 2rem;
+        font-family: sans-serif;
+        margin: 2rem 0;
+    }
+
+    .word-container {
+        position: relative;
+        height: 2.5rem;
+        overflow: hidden;
+        margin: 0 0.5rem;
+    }
+
+    .word-scroll {
+        position: absolute;
+        transition: transform 1s ease;
+    }
+
+    .word {
+        height: 2.5rem;
+        display: flex;
+        align-items: center;
+        font-weight: bold;
+        color: #3b82f6;
+    }
+</style>
+
+<script>
+    // Wait for the document to be fully loaded
+    document.addEventListener("DOMContentLoaded", () => {
+        const wordScroll = document.getElementById("wordScroll");
+        const words = document.querySelectorAll(".word");
+        const wordHeight = (words[0] as HTMLElement).offsetHeight;
+        let currentIndex = 0;
+
+        // Set initial position
+        if (wordScroll) {
+            wordScroll.style.transform = `translateY(0)`;
+        }
+
+        // Animation function
+        function scrollToNextWord() {
+            currentIndex = (currentIndex + 1) % (words.length - 1);
+            if (wordScroll) {
+                wordScroll.style.transform = `translateY(-${currentIndex * wordHeight}px)`;
+            }
+        }
+
+        // Start the animation loop
+        setInterval(scrollToNextWord, 3000); // Change word every 3 seconds
+    });
+</script>
