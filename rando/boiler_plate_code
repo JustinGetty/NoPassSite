@@ -1,0 +1,38 @@
+<script
+  src="https://cdn.jsdelivr.net/npm/bastion-auth@1.2.3/dist/bastion-auth.umd.js"
+  integrity="sha384-‹YOUR_SRI_HASH›"
+  crossorigin="anonymous">
+</script>
+<script>
+  BastionAuth.init({
+    // Ensure this is your client id!
+    clientId: 'acme-corp-spa-v1',
+    popupUrl: 'https://auth.bastion.com/popup'
+  });
+  window.addEventListener('message', e => {
+    if (e.origin !== new URL('https://auth.bastion.com').origin) return;
+    const { status, user, isNewUser, error } = e.data;
+
+    if (status === 'success') {
+      const { username } = user;
+      console.log('👍 Authenticated:', username);
+
+      if (isNewUser) {
+        console.log('🎉 New signup:', username);
+        // EXAMPLE: log this username in your own database, ask user for more details, etc.
+      } else {
+        console.log('👋 Welcome back:', username);
+        // —> EXAMPLE: you could look up existing profile, etc.
+      }
+
+    } else {
+      console.error('❌ Auth failed:', error);
+    }
+  });
+  document.getElementById('signinBtn').onclick = () => {
+    BastionAuth.signIn().catch(err => {
+      console.error('Popup open failed:', err);
+    });
+  };
+</script>
+<button id="signinBtn">Sign In with Bastion</button>

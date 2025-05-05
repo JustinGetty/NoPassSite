@@ -1,3 +1,3 @@
 ---
-
+title: "Integrations Documentation"
 ---

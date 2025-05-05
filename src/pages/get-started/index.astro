@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Get Started | Your App</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.13.3/cdn.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f9fafb;
+    }
+    
+    .gradient-bg {
+      background: linear-gradient(120deg, #4f46e5 0%, #8b5cf6 100%);
+    }
+    
+    .plan-card {
+      transition: all 0.3s ease;
+    }
+    
+    .plan-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .selected-plan {
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.3);
+    }
+    
+    .step-indicator {
+      transition: all 0.3s ease;
+    }
+    
+    .step-indicator.completed {
+      background-color: #4f46e5;
+      color: white;
+    }
+    
+    .step-indicator.active {
+      border-color: #4f46e5;
+      border-width: 2px;
+      color: #4f46e5;
+    }
+    
+    .step-line {
+      height: 2px;
+      background-color: #e5e7eb;
+      flex-grow: 1;
+      margin: 0 8px;
+      transition: all 0.3s ease;
+    }
+    
+    .step-line.completed {
+      background-color: #4f46e5;
+    }
+    
+    .fade-enter {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    
+    .fade-enter-active {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.5s, transform 0.5s;
+    }
+    
+    .code-container {
+      background-color: #1e1e3f;
+      color: #a9b1d6;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    .code-header {
+      background-color: #191932;
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .code-dots {
+      display: flex;
+      gap: 6px;
+    }
+    
+    .code-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+  <div x-data="{
+    currentStep: 1,
+    plan: '',
+    domain: '',
+    siteId: '',
+    verifying: false,
+    verified: false,
+    generating: false,
+    generationComplete: false,
+    
+    nextStep() {
+      if (this.currentStep < 4) {
+        this.currentStep++;
+      }
+    },
+    
+    prevStep() {
+      if (this.currentStep > 1) {
+        this.currentStep--;
+      }
+    },
+    
+    selectPlan(selectedPlan) {
+      this.plan = selectedPlan;
+    },
+    
+    verifyDomain() {
+      this.verifying = true;
+      setTimeout(() => {
+        this.verifying = false;
+        this.verified = true;
+      }, 1500);
+    },
+    
+    generateCode() {
+      this.generating = true;
+      setTimeout(() => {
+        this.generating = false;
+        this.generationComplete = true;
+      }, 2000);
+    },
+    
+    get generatedCode() {
+      return `// Generated for ${this.domain} with site ID: ${this.siteId}
+import { defineConfig } from 'astro/config';
+import tailwind from '@astrojs/tailwind';
+
+export default defineConfig({
+  site: 'https://${this.domain}',
+  integrations: [tailwind()],
+  app: {
+    siteId: '${this.siteId}'
+  }
+});`;
+    },
+    
+    copyToClipboard() {
+      navigator.clipboard.writeText(this.generatedCode);
+      
+      // Show copied message
+      const el = document.getElementById('copied-message');
+      el.classList.remove('hidden');
+      setTimeout(() => {
+        el.classList.add('hidden');
+      }, 2000);
+    },
+    
+    downloadConfig() {
+      const blob = new Blob([this.generatedCode], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'astro.config.mjs';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+  }" class="min-h-screen flex flex-col">
+    
+    <!-- Header -->
+    <header class="gradient-bg text-white p-6">
+      <div class="max-w-6xl mx-auto">
+        <div class="flex justify-between items-center">
+          <div class="flex items-center space-x-3">
+            <div class="bg-white bg-opacity-20 rounded-full p-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" />
+              </svg>
+            </div>
+            <h1 class="text-xl font-semibold">YourApp</h1>
+          </div>
+          <nav>
+            <ul class="flex space-x-6">
+              <li><a href="#" class="hover:text-indigo-200 transition">Docs</a></li>
+              <li><a href="#" class="hover:text-indigo-200 transition">Support</a></li>
+              <li><a href="#" class="hover:text-indigo-200 transition">Login</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </header>
+    
+    <main class="flex-1 py-12 px-6">
+      <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-sm overflow-hidden">
+        
+        <!-- Progress Tracker -->
+        <div class="p-6 border-b border-gray-100">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center flex-1">
+              <div class="step-indicator rounded-full w-8 h-8 flex items-center justify-center border" :class="{'completed': currentStep > 1, 'active': currentStep === 1}">
+                <span x-text="currentStep > 1 ? '✓' : '1'"></span>
+              </div>
+              <div class="step-line" :class="{'completed': currentStep > 1}"></div>
+              
+              <div class="step-indicator rounded-full w-8 h-8 flex items-center justify-center border" :class="{'completed': currentStep > 2, 'active': currentStep === 2}">
+                <span x-text="currentStep > 2 ? '✓' : '2'"></span>
+              </div>
+              <div class="step-line" :class="{'completed': currentStep > 2}"></div>
+              
+              <div class="step-indicator rounded-full w-8 h-8 flex items-center justify-center border" :class="{'completed': currentStep > 3, 'active': currentStep === 3}">
+                <span x-text="currentStep > 3 ? '✓' : '3'"></span>
+              </div>
+              <div class="step-line" :class="{'completed': currentStep > 3}"></div>
+              
+              <div class="step-indicator rounded-full w-8 h-8 flex items-center justify-center border" :class="{'active': currentStep === 4}">
+                <span>4</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="flex justify-between mt-2 text-sm text-gray-500">
+            <div :class="{'text-indigo-600 font-medium': currentStep === 1}">Choose Plan</div>
+            <div :class="{'text-indigo-600 font-medium': currentStep === 2}">Website Details</div>
+            <div :class="{'text-indigo-600 font-medium': currentStep === 3}">Configure</div>
+            <div :class="{'text-indigo-600 font-medium': currentStep === 4}">Generate</div>
+          </div>
+        </div>
+        
+        <!-- Step Content -->
+        <div class="p-8">
+          <!-- Step 1: Choose Plan -->
+          <div x-show="currentStep === 1" class="space-y-8">
+            <div class="text-center">
+              <h2 class="text-2xl font-semibold text-gray-800">Choose Your Plan</h2>
+              <p class="mt-2 text-gray-600">Select the plan that works best for your project needs</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <!-- Starter Plan -->
+              <div class="plan-card border rounded-xl p-6 cursor-pointer" :class="{'selected-plan': plan === 'starter'}" @click="selectPlan('starter')">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <h3 class="font-semibold text-lg">Starter</h3>
+                    <p class="text-3xl font-bold mt-2">$9<span class="text-base font-normal text-gray-500">/mo</span></p>
+                  </div>
+                  <div class="h-6 w-6 rounded-full border-2 flex items-center justify-center" :class="{'border-indigo-600 bg-indigo-600': plan === 'starter', 'border-gray-300': plan !== 'starter'}">
+                    <svg x-show="plan === 'starter'" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                </div>
+                
+                <div class="mt-6 space-y-4">
+                  <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="ml-2 text-gray-600">1 website</span>
+                  </div>
+                  <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="ml-2 text-gray-600">Basic templates</span>
+                  </div>
+                  <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="ml-2 text-gray-600">Community support</span>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Pro Plan -->
+              <div class="plan-card border rounded-xl p-6 cursor-pointer relative" :class="{'selected-plan': plan === 'pro'}" @click="selectPlan('pro')">
+                <div class="absolute -top-3 left-0 right-0 flex justify-center">
+                  <span class="bg-indigo-600 text-white px-3 py-1 rounded-full text-xs font-medium">POPULAR</span>
+                </div>
+                
+                <div class="flex justify-between items-start">
+                  <div>
+                    <h3 class="font-semibold text-lg">Pro</h3>
+                    <p class="text-3xl font-bold mt-2">$29<span class="text-base font-normal text-gray-500">/mo</span></p>
+                  </div>
+                  <div class="h-6 w-6 rounded-full border-2 flex items-center justify-center" :class="{'border-indigo-600 bg-indigo-600': plan === 'pro', 'border-gray-300': plan !== 'pro'}">
+                    <svg x-show="plan === 'pro'" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                </div>
+                
+                <div class="mt-6 space-y-4">
+                  <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="ml-2 text-gray-600">5 websites</span>
+                  </div>
+                  <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="ml-2 text-gray-600">Premium templates</span>
+                  </div>
+                  <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="ml-2 text-gray-600">Priority support</span>
+                  </div>
+                  <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="ml-2 text-gray-600">Analytics dashboard</span>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Enterprise Plan -->
+              <div class="plan-card border rounded-xl p-6 cursor-pointer" :class="{'selected-plan': plan === 'enterprise'}" @click="selectPlan('enterprise')">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <h3 class="font-semibold text-lg">Enterprise</h3>
+                    <p class="text-3xl font-bold mt-2">$99<span class="text-base font-normal text-gray-500">/mo</span></p>
+                  </div>
+                  <div class="h-6 w-6 rounded-full border-2 flex items-center justify-center" :class="{'border-indigo-600 bg-indigo-600': plan === 'enterprise', 'border-gray-300': plan !== 'enterprise'}">
+                    <svg x-show="plan === 'enterprise'" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                </div>
+                
+                <div class="mt-6 space-y-4">
+                  <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="ml-2 text-gray-600">Unlimited websites</span>
+                  </div>
+                  <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="ml-2 text-gray-600">Custom templates</span>
+                  </div>
+                  <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="ml-2 text-gray-600">24/7 premium support</span>
+                  </div>
+                  <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="ml-2 text-gray-600">Advanced analytics</span>
+                  </div>
+                  <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="ml-2 text-gray-600">White-label option</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Step 2: Website Details -->
+          <div x-show="currentStep === 2" class="space-y-8">
+            <div class="text-center">
+              <h2 class="text-2xl font-semibold text-gray-800">Website Details</h2>
+              <p class="mt-2 text-gray-600">Tell us about your website to get started</p>
+            </div>
+            
+            <div class="space-y-6">
+              <div>
+                <label for="domain" class="block text-sm font-medium text-gray-700 mb-1">Domain Name</label>
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                    </svg>
+                  </div>
+                  <input 
+                    id="domain" 
+                    type="text" 
+                    x-model="domain" 
+                    placeholder="yourdomain.com" 
+                    class="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3 border"
+                    autocomplete="off"
+                  >
+                </div>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Verify Domain</label>
+                <div class="flex items-center space-x-4">
+                  <button 
+                    @click="verifyDomain" 
+                    :disabled="!domain || verifying || verified" 
+                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm" 
+                    :class="{'bg-indigo-600 hover:bg-indigo-700 text-white': domain && !verified, 'bg-gray-300 cursor-not-allowed text-gray-500': !domain || verified}"
+                  >
+                    <span x-show="!verifying && !verified">Verify Domain</span>
+                    <span x-show="verifying">
+                      <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Verifying...
+                    </span>
+                    <span x-show="verified">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                      </svg>
+                      Verified
+                    </span>
+                  </button>
+                  
+                  <div x-show="verified" class="text-green-600 text-sm flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    Domain verified successfully!
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <label for="siteId" class="block text-sm font-medium text-gray-700 mb-1">Site ID</label>
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                    </svg>
+                  </div>
+                  <input 
+                    id="siteId" 
+                    type="text" 
+                    x-model="siteId" 
+                    placeholder="Enter a unique identifier for your site" 
+                    class="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3 border"
+                    autocomplete="off"
+                  >
+                </div>
+                <p class="text-xs text-gray-500 mt-1">This ID will be used to generate your configuration.</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Step 3: Configure -->
+          <div x-show="currentStep === 3" class="space-y-8">
+            <div class="text-center">
+              <h2 class="text-2xl font-semibold text-gray-800">Configuration</h2>
+              <p class="mt-2 text-gray-600">Additional settings for your application</p>
+            </div>
+            
+            <div class="space-y-6">
+              <div>
+                <h3 class="text-lg font-medium text-gray-900">Template Options</h3>
+                <div class="mt-4 space-y-3">
+                  <div class="flex items-center">
+                    <input id="template-default" name="template" type="radio" checked class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                    <label for="template-default" class="ml-3 block text-sm font-medium text-gray-700">Default Template</label>
+                  </div>
+                  <div class="flex items-center">
+                    <input id="template-blog" name="template" type="radio" class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                    <label for="template-blog" class="ml-3 block text-sm font-medium text-gray-700">Blog Template</label>
+                  </div>
+                  <div class="flex items-center">
+                    <input id="template-ecommerce" name="template" type="radio" class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                    <label for="template-ecommerce" class="ml-3 block text-sm font-medium text-gray-700">E-commerce Template</label>
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <h3 class="text-lg font-medium text-gray-900">Integrations</h3>
+                <div class="mt-4 space-y-3">
+                  <div class="flex items-center">
+                    <input id="integration-tailwind" type="checkbox" checked class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                    <label for="integration-tailwind" class="ml-3 block text-sm font-medium text-gray-700">Tailwind CSS</label>
+                  </div>
+                  <div class="flex items-center">
+                    <input id="integration-typescript" type="checkbox" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                    <label for="integration-typescript" class="ml-3 block text-sm font-medium text-gray-700">TypeScript</label>
+                  </div>
+                  <div class="flex items-center">
+                    <input id="integration-react" type="checkbox" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                    <label for="integration-react" class="ml-3 block text-sm font-medium text-gray-700">React</label>
+                  </div>
+                  <div class="flex items-center">
+                    <input id="integration-vue" type="checkbox" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                    <label for="integration-vue" class="ml-3 block text-sm font-medium text-gray-700">Vue</label>
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <h3 class="text-lg font-medium text-gray-900">Deployment</h3>
+                <div class="mt-4 space-y-3">
+                  <div class="flex items-center">
+                    <input id="deploy-netlify" name="deployment" type="radio" checked class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                    <label for="deploy-netlify" class="ml-3 block text-sm font-medium text-gray-700">Netlify</label>
+                  </div>
+                  <div class="flex items-center">
+                    <input id="deploy-vercel" name="deployment" type="radio" class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                    <label for="deploy-vercel" class="ml-3 block text-sm font-medium text-gray-700">Vercel</label>
+                  </div>
+                  <div class="flex items-center">
+                    <input id="deploy-github" name="deployment" type="radio" class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                    <label for="deploy-github" class="ml-3 block text-sm font-medium text-gray-700">GitHub Pages</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Step 4: Generate -->
+          <div x-show="currentStep === 4" class="space-y-8">
+            <div class="text-center">
+              <h2 class="text-2xl font-semibold text-gray-800">Generate Your Code</h2>
+              <p class="mt-2 text-gray-600">We've created your configuration based on your inputs</p>
+            </div>
+            
+            <div class="space-y-6">
+              <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center">
+                    <div class="bg-indigo-100 rounded-full p-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <h3 class="ml-3 text-md font-medium text-gray-900">Configuration Summary</h3>
+                  </div>
+                </div>
+                
+                <div class="space-y-3 text-sm">
+                  <div class="flex">
+                    <span class="font-medium text-gray-500 w-24">Plan:</span>
+                    <span class="text-gray-900" x-text="plan ? plan.charAt(0).toUpperCase() + plan.slice(1) : 'Not selected'"></span>
+                  </div>
+                  <div class="flex">
+                    <span class="font-medium text-gray-500 w-24">Domain:</span>
+                    <span class="text-gray-900" x-text="domain || 'Not provided'"></span>
+                  </div>
+                  <div class="flex">
+                    <span class="font-medium text-gray-500 w-24">Site ID:</span>
+                    <span class="text-gray-900" x-text="siteId || 'Not provided'"></span>
+                  </div>
+                  <div class="flex">
+                    <span class="font-medium text-gray-500 w-24">Verified:</span>
+                    <span class="text-gray-900" x-text="verified ? 'Yes' : 'No'"></span>
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <button 
+                  @click="generateCode" 
+                  :disabled="!domain || !siteId || !plan || generating || generationComplete" 
+                  class="w-full flex justify-center items-center px-4 py-3 border border-transparent text-base font-medium rounded-md shadow-sm" 
+                  :class="{'bg-indigo-600 hover:bg-indigo-700 text-white': domain && siteId && plan && !generationComplete, 'bg-gray-300 cursor-not-allowed text-gray-500': !domain || !siteId || !plan || generationComplete}"
+                >
+                  <span x-show="!generating && !generationComplete">Generate Code</span>
+                  <span x-show="generating">
+                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Generating...
+                  </span>
+                </button>
+              </div>
+              
+              <div x-show="generationComplete" class="code-container">
+                <div class="code-header">
+                  <div class="code-dots">
+                    <div class="code-dot bg-red-500"></div>
+                    <div class="code-dot bg-yellow-500"></div>
+                    <div class="code-dot bg-green-500"></div>
+                  </div>
+                  <div class="text-xs text-gray-400">astro.config.mjs</div>
+                </div>
+                <pre class="p-4 overflow-x-auto text-sm font-mono" x-text="generatedCode"></pre>
+                <div class="flex items-center justify-between border-t border-gray-700 p-3">
+                  <div class="relative">
+                    <button 
+                      @click="copyToClipboard" 
+                      class="text-xs flex items-center text-gray-400 hover:text-white"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                      </svg>
+                      Copy to clipboard
+                    </button>
+                    <span id="copied-message" class="absolute -top-8 left-0 bg-gray-800 text-white text-xs py-1 px-2 rounded hidden">
+                      Copied!
+                    </span>
+                  </div>
+                  <button 
+                    @click="downloadConfig" 
+                    class="text-xs flex items-center text-gray-400 hover:text-white"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Download
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Navigation Controls -->
+          <div class="flex items-center justify-between pt-8">
+            <button 
+              x-show="currentStep > 1" 
+              @click="prevStep" 
+              class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+              </svg>
+              Back
+            </button>
+            
+            <button 
+              x-show="currentStep < 4" 
+              @click="nextStep" 
+              :disabled="(currentStep === 1 && !plan) || (currentStep === 2 && (!domain || !siteId || !verified))"
+              class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm"
+              :class="{
+                'bg-indigo-600 hover:bg-indigo-700 text-white': (currentStep === 1 && plan) || (currentStep === 2 && domain && siteId && verified) || currentStep === 3,
+                'bg-gray-300 cursor-not-allowed text-gray-500': (currentStep === 1 && !plan) || (currentStep === 2 && (!domain || !siteId || !verified))
+              }"
+            >
+              Next
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Quick Help Section -->
+      <div class="mt-8 max-w-4xl mx-auto bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-gray-100">
+          <h3 class="font-medium text-gray-900">Need Help?</h3>
+        </div>
+        <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="flex space-x-3">
+            <div class="flex-shrink-0">
+              <div class="bg-indigo-100 rounded-full p-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+            </div>
+            <div>
+              <h4 class="text-sm font-medium text-gray-900">Documentation</h4>
+              <p class="mt-1 text-sm text-gray-500">Check out our detailed documentation for guides and references.</p>
+              <a href="#" class="mt-2 inline-block text-sm text-indigo-600 hover:text-indigo-500">View docs</a>
+            </div>
+          </div>
+          
+          <div class="flex space-x-3">
+            <div class="flex-shrink-0">
+              <div class="bg-indigo-100 rounded-full p-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                </svg>
+              </div>
+            </div>
+            <div>
+              <h4 class="text-sm font-medium text-gray-900">Support</h4>
+              <p class="mt-1 text-sm text-gray-500">Contact our support team if you need personalized help.</p>
+              <a href="#" class="mt-2 inline-block text-sm text-indigo-600 hover:text-indigo-500">Get support</a>
+            </div>
+          </div>
+          
+          <div class="flex space-x-3">
+            <div class="flex-shrink-0">
+              <div class="bg-indigo-100 rounded-full p-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+                </svg>
+              </div>
+            </div>
+            <div>
+              <h4 class="text-sm font-medium text-gray-900">Community</h4>
+              <p class="mt-1 text-sm text-gray-500">Join our community forum to discuss and share ideas.</p>
+              <a href="#" class="mt-2 inline-block text-sm text-indigo-600 hover:text-indigo-500">Join community</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    
+    <footer class="bg-gray-50 border-t border-gray-100 mt-12 py-8">
+      <div class="max-w-6xl mx-auto px-6">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <div class="flex items-center space-x-3 mb-4 md:mb-0">
+            <div class="bg-indigo-600 rounded-full p-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" />
+              </svg>
+            </div>
+            <h2 class="text-lg font-semibold text-gray-900">YourApp</h2>
+          </div>
+          
+          <div class="flex flex-wrap justify-center space-x-6">
+            <a href="#" class="text-gray-500 hover:text-gray-900 text-sm">Terms</a>
+            <a href="#" class="text-gray-500 hover:text-gray-900 text-sm">Privacy</a>
+            <a href="#" class="text-gray-500 hover:text-gray-900 text-sm">Contact</a>
+          </div>
+        </div>
+        <div class="mt-8 text-center text-sm text-gray-500">
+          &copy; 2025 YourApp, Inc. All rights reserved.
+        </div>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>
