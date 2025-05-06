@@ -131,13 +131,36 @@
       }, 1500);
     },
     
-    generateCode() {
-      this.generating = true;
-      setTimeout(() => {
-        this.generating = false;
-        this.generationComplete = true;
-      }, 2000);
-    },
+    generateCode: async function () {
+  if (!this.domain || !this.siteId) return;   // safety net
+
+  this.generating = true;
+
+  try {
+    // ‑‑‑ POST domain + siteId to Flask ‑‑‑
+    const res = await fetch('http://192.168.1.213:1212/newsite', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        domain: this.domain,
+        siteId: this.siteId
+      })
+    });
+
+    if (!res.ok) throw new Error(`Server error ${res.status}`);
+    const data = await res.json();           // whatever JSON you send back
+    console.log('Flask says:', data);
+  } catch (err) {
+    console.error(err);
+    // optional: surface a toast / banner in the UI here
+  } finally {
+    // keep the original visual flow
+    setTimeout(() => {
+      this.generating = false;
+      this.generationComplete = true;
+    }, 500);                                 // shorter delay feels snappier
+  }
+},
     
     get generatedCode() {
       return `// Generated for ${this.domain} with site ID: ${this.siteId}
@@ -731,7 +754,7 @@ export default defineConfig({
           </div>
         </div>
         <div class="mt-8 text-center text-sm text-gray-500">
-          &copy; 2025 YourApp, Inc. All rights reserved.
+          &copy; 2025 Bastion Auth, Inc. All rights reserved.
         </div>
       </div>
     </footer>
