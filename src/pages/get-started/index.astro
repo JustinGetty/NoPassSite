@@ -1,9 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Get Started | Your App</title>
+---
+// src/pages/get-started.astro
+import MainLayout from '/src/layouts/MainLayout.astro';
+
+export const metadata = {
+  title: 'Get Started | Your App',
+};
+--- 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.13.3/cdn.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
   <style>
@@ -95,7 +97,9 @@
       border-radius: 50%;
     }
   </style>
-</head>
+
+  
+<MainLayout>
 <body>
   <div x-data="{
     currentStep: 1,
@@ -199,29 +203,6 @@ export default defineConfig({
       URL.revokeObjectURL(url);
     }
   }" class="min-h-screen flex flex-col">
-    
-    <!-- Header -->
-    <header class="gradient-bg text-white p-6">
-      <div class="max-w-6xl mx-auto">
-        <div class="flex justify-between items-center">
-          <div class="flex items-center space-x-3">
-            <div class="bg-white bg-opacity-20 rounded-full p-2">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" />
-              </svg>
-            </div>
-            <h1 class="text-xl font-semibold">YourApp</h1>
-          </div>
-          <nav>
-            <ul class="flex space-x-6">
-              <li><a href="#" class="hover:text-indigo-200 transition">Docs</a></li>
-              <li><a href="#" class="hover:text-indigo-200 transition">Support</a></li>
-              <li><a href="#" class="hover:text-indigo-200 transition">Login</a></li>
-            </ul>
-          </nav>
-        </div>
-      </div>
-    </header>
     
     <main class="flex-1 py-12 px-6">
       <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-sm overflow-hidden">
@@ -757,4 +738,4 @@ export default defineConfig({
     </footer>
   </div>
 </body>
-</html>
+</MainLayout>
