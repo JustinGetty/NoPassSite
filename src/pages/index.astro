@@ -140,7 +140,9 @@ import MainLayout from "../layouts/MainLayout.astro";
                         </ul>
                         
                         <a href="#" class="mt-8 inline-flex items-center text-indigo-200 hover:text-white">
-                            <span>Learn more about our security</span>
+                            <span 
+                            onclick="location.href='/security-info'"
+                            >Learn more about our security</span>
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
                             </svg>
@@ -150,7 +152,6 @@ import MainLayout from "../layouts/MainLayout.astro";
             </div>
         </div>
 
-        <!-- Features Grid -->
         <div class="mb-24">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-12 text-center">
                 Key Features
@@ -163,8 +164,8 @@ import MainLayout from "../layouts/MainLayout.astro";
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                         </svg>
                     </div>
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">Magic Links</h3>
-                    <p class="text-gray-600 dark:text-gray-300">Secure email-based authentication with one-time links that expire after use.</p>
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">Username Only</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Secure mobile based authentication without password vulnerabilities.</p>
                 </div>
                 
                 <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
@@ -184,20 +185,19 @@ import MainLayout from "../layouts/MainLayout.astro";
                         </svg>
                     </div>
                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">Multi-factor Auth</h3>
-                    <p class="text-gray-600 dark:text-gray-300">Additional security layers with SMS, authenticator apps, and hardware keys.</p>
+                    <p class="text-gray-600 dark:text-gray-300">Additional security layers with Email or Seed Phrase Recovery, authenticator apps, and biometrics.</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Words to cycle through for typing animation
         const words = ["Passwords", "Forgetting", "Stolen Creds", "Breaches", "Phishing"];
         const typedTextElement = document.getElementById("typed-text");
         let wordIndex = 0;
         let charIndex = 0;
         let isDeleting = false;
-        let typingSpeed = 150; // Base speed in milliseconds
+        let typingSpeed = 150; 
 
         function typeEffect() {
             if (!typedTextElement) {
@@ -208,24 +208,19 @@ import MainLayout from "../layouts/MainLayout.astro";
             const currentWord = words[wordIndex];
 
             if (isDeleting) {
-                // Deleting state
                 typedTextElement.textContent = currentWord.substring(0, charIndex - 1);
                 charIndex--;
-                typingSpeed = 80; // Regular deletion speed
+                typingSpeed = 80; 
             } else {
-                // Typing state
                 typedTextElement.textContent = currentWord.substring(0, charIndex + 1);
                 charIndex++;
-                typingSpeed = 150; // Normal typing speed
+                typingSpeed = 150; 
             }
 
-            // Switch between typing and deleting
             if (!isDeleting && charIndex === currentWord.length) {
-                // Finished typing, start deleting after pause
                 isDeleting = true;
                 typingSpeed = 1500; // Pause at the end of word
             } else if (isDeleting && charIndex === 0) {
-                // Finished deleting, start typing next word
                 isDeleting = false;
                 wordIndex = (wordIndex + 1) % words.length;
                 typingSpeed = 500; // Pause before typing next word
@@ -258,7 +253,6 @@ import MainLayout from "../layouts/MainLayout.astro";
                     authStep1.classList.add('hidden');
                     authStep2.classList.remove('hidden');
                 } else {
-                    // Simple validation feedback
                     demoEmail.classList.add('ring-2', 'ring-red-500');
                     setTimeout(() => {
                         demoEmail.classList.remove('ring-2', 'ring-red-500');
@@ -284,13 +278,11 @@ import MainLayout from "../layouts/MainLayout.astro";
             `width=${popupWidth},height=${popupHeight},top=${top},left=${left},resizable=no`,
         );
         
-        // Show success state after popup is opened
         document.getElementById('auth-step-1').classList.add('hidden');
         document.getElementById('auth-step-2').classList.remove('hidden');
     }
     window.openSignInPopup = openSignInPopup;
     
-    // Demo reset functionality
     document.addEventListener('DOMContentLoaded', function() {
         const demoResetBtn = document.getElementById('demo-reset');
         

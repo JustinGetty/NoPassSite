@@ -1,7 +1,6 @@
 ---
 // Header.astro
 ---
-
 <header class="w-full fixed top-0 transition-all duration-300 z-20">
     <div
         id="header-element"
@@ -10,8 +9,13 @@
         <div class="flex h-full flex-row justify-between items-center">
             <a class="h-8 w-auto" href="/">
                 <img
-                    class="h-full"
+                    class="h-full dark:hidden"
                     src="/Bastion-Logo-Black.png"
+                    alt="bastion logo"
+                />
+                <img
+                    class="h-full dark:block"
+                    src="/bastion-logo-white.png"
                     alt="bastion logo"
                 />
             </a>
@@ -29,7 +33,7 @@
                         <a href="/faq">FAQ</a>
                     </li>
                     <li class="hover:text-white transition-colors ease-in-out">
-                        <a href="/about">About</a>
+                        <a href="/dashboard">About</a>
                     </li>
                 </ul>
                 <ul class="flex flex-row gap-3">
@@ -39,23 +43,24 @@
                             href="/demo">Demo</a
                         >
                     </li>
-                    <li>
+                    <li id="auth-button-container">
                         <a
+                            id="login-button"
                             class="border-2 dark:border-neutral-200 rounded-md px-4 py-2 dark:bg-neutral-200 dark:text-off-black hover:border-white hover:bg-white transition-colors ease-in-out"
-                            href="">Log In</a
-                        >
+                            href="javascript:void(0)"
+                            onclick="openSignInPopup()"
+                        >Log In</a>
                     </li>
                 </ul>
             </nav>
         </div>
     </div>
 </header>
-
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+        // Header scroll effect
         const header = document.getElementById("header-element");
         let ticking = false;
-
         const handleScroll = () => {
             if (!ticking) {
                 requestAnimationFrame(() => {
@@ -76,8 +81,108 @@
                 ticking = true;
             }
         };
-
         window.addEventListener("scroll", handleScroll, { passive: true });
         handleScroll();
+
+        // Authentication logic
+        checkAuthStatus();
     });
+
+    // Handle authentication popup
+    function openSignInPopup() {
+        const popupWidth = 500;
+        const popupHeight = 600;
+        const left = (screen.width - popupWidth) / 2;
+        const top = (screen.height - popupHeight) / 2;
+        
+        const authWindow = window.open(
+            "/popup", 
+            "Sign In",
+            `width=${popupWidth},height=${popupHeight},top=${top},left=${left},resizable=no`,
+        );
+        
+        // Listen for messages from the popup window
+        window.addEventListener('message', function(event) {
+            // Verify origin for security
+            // Replace with your actual domain in production
+            if (event.origin !== window.location.origin) return;
+            
+            // Handle successful authentication
+            if (event.data.type === 'auth-success' && event.data.user) {
+                handleSuccessfulAuth(event.data.user);
+            }
+        });
+    }
+    window.openSignInPopup = openSignInPopup;
+    
+    // Check if user is already authenticated
+    function checkAuthStatus() {
+        const user = localStorage.getItem('bastionAuthUser');
+        if (user) {
+            try {
+                const userData = JSON.parse(user);
+                updateUIForLoggedInUser(userData);
+                
+                // If we're not on the dashboard page, redirect there
+                if (!window.location.pathname.includes('/dashboard')) {
+                    // Optional: Only redirect if authentication is recent
+                    const authTimestamp = localStorage.getItem('bastionAuthTimestamp');
+                    const now = new Date().getTime();
+                    
+                    // If auth is less than 30 minutes old, redirect
+                    if (authTimestamp && (now - authTimestamp < 30 * 60 * 1000)) {
+                        window.location.href = '/dashboard';
+                    }
+                }
+            } catch (e) {
+                console.error('Error parsing auth data', e);
+                localStorage.removeItem('bastionAuthUser');
+            }
+        }
+    }
+    
+    // Handle successful authentication
+    function handleSuccessfulAuth(user) {
+        // Store user data in localStorage
+        localStorage.setItem('bastionAuthUser', JSON.stringify(user));
+        localStorage.setItem('bastionAuthTimestamp', new Date().getTime());
+        
+        // Update UI
+        updateUIForLoggedInUser(user);
+        
+        // Redirect to dashboard
+        window.location.href = '/dashboard';
+    }
+    
+    // Update UI for logged in users
+    function updateUIForLoggedInUser(user) {
+        const authButtonContainer = document.getElementById('auth-button-container');
+        
+        if (authButtonContainer) {
+            authButtonContainer.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <div class="h-8 w-8 rounded-full bg-indigo-100 dark:bg-indigo-800 flex items-center justify-center text-indigo-600 dark:text-indigo-300 font-semibold">
+                        ${user.username ? user.username.charAt(0).toUpperCase() : 'U'}
+                    </div>
+                    <a 
+                        href="/dashboard" 
+                        class="border-2 dark:border-neutral-200 rounded-md px-4 py-2 dark:bg-neutral-200 dark:text-off-black hover:border-white hover:bg-white transition-colors ease-in-out flex items-center gap-2"
+                    >
+                        <span>${user.username || 'Account'}</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </a>
+                </div>
+            `;
+        }
+    }
+    
+    // Add a function to log out (for completeness)
+    function logOut() {
+        localStorage.removeItem('bastionAuthUser');
+        localStorage.removeItem('bastionAuthTimestamp');
+        window.location.href = '/';
+    }
+    window.logOut = logOut;
 </script>
