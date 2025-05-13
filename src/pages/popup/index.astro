@@ -471,6 +471,7 @@
     let transactionId = null;
     let codeVerifier = null;
     let currentState = null;
+    let currentUsername = ""; // Store the username
     const ERROR_DISPLAY_TIME = 20000; 
 
     function generateRandomString(len) {
@@ -516,6 +517,8 @@
             action: 'og_challenge_code_res',
             transaction_id: transactionId,
             code_verifier: codeVerifier,
+            client_id: CLIENT_ID,
+            username: currentUsername,
             state: currentState
           }));
           return;
@@ -540,7 +543,21 @@
             return;
           case 'approved':
             showStatus('Authentication successful!', 'success');
-            resetAll();
+            if (window.opener && !window.opener.closed) {
+              window.opener.postMessage(
+                {
+                  type: 'bastion-auth',
+                  status: 'approved',
+                  username: currentUsername, // Send the username back to parent window
+                  transactionId,
+                  state: currentState
+                },
+                window.location.origin
+              );
+            }
+
+            // Close this popup
+            setTimeout(() => window.close(), 300);
             return;
           case 'invalid_spa_id':
             resetAll();
@@ -557,14 +574,18 @@
     }
 
     async function sendUsernameToServer() {
-      const user = document.getElementById('username').value.trim();
-      if (!user) { showStatus('Please enter a username', 'error'); return; }
+      const username = document.getElementById('username').value.trim();
+      if (!username) { showStatus('Please enter a username', 'error'); return; }
+      
+      // Store the username
+      currentUsername = username;
+      
       if (!ws || ws.readyState !== WebSocket.OPEN) { initWS(); setTimeout(sendUsernameToServer, 500); return; }
       const state = generateRandomString(16);
       let challenge;
       try { challenge = await generatePKCE(); }
       catch (e) { showStatus('Crypto error', 'error'); return; }
-      ws.send(JSON.stringify({ action: 'start_signin', client_id: CLIENT_ID, username: user, code_challenge: challenge, code_challenge_method: 'S256', state }));
+      ws.send(JSON.stringify({ action: 'start_signin', client_id: CLIENT_ID, username: currentUsername, code_challenge: challenge, code_challenge_method: 'S256', state }));
       console.log('Sent start_signin');
       showWaitingScreen();
     }

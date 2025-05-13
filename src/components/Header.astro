@@ -35,7 +35,7 @@
                         <a href="/faq">FAQ</a>
                     </li>
                     <li class="hover:text-white transition-colors ease-in-out">
-                        <a href="/dashboard">About</a>
+                        <a href="/about">About</a>
                     </li>
                 </ul>
                 <ul class="flex flex-row gap-3">
@@ -59,6 +59,12 @@
     </div>
 </header>
 <script>
+    // Store user session data
+    let userSession = {
+        isLoggedIn: false,
+        username: null
+    };
+
     document.addEventListener("DOMContentLoaded", () => {
         // Header scroll effect
         const header = document.getElementById("header-element");
@@ -86,8 +92,18 @@
         window.addEventListener("scroll", handleScroll, { passive: true });
         handleScroll();
 
-        // Authentication logic
-        checkAuthStatus();
+        // Check if user was previously logged in (from localStorage)
+        const savedUser = localStorage.getItem('bastionAuthUser');
+        if (savedUser) {
+            try {
+                const userData = JSON.parse(savedUser);
+                userSession = userData;
+                updateUIForLoggedInUser(userData);
+            } catch (e) {
+                console.error('Error parsing saved user data', e);
+                localStorage.removeItem('bastionAuthUser');
+            }
+        }
     });
 
     // Handle authentication popup
@@ -97,65 +113,14 @@
         const left = (screen.width - popupWidth) / 2;
         const top = (screen.height - popupHeight) / 2;
         
-        const authWindow = window.open(
+        window.open(
             "/popup", 
             "Sign In",
             `width=${popupWidth},height=${popupHeight},top=${top},left=${left},resizable=no`,
         );
-        
-        // Listen for messages from the popup window
-        window.addEventListener('message', function(event) {
-            // Verify origin for security
-            // Replace with your actual domain in production
-            if (event.origin !== window.location.origin) return;
-            
-            // Handle successful authentication
-            if (event.data.type === 'auth-success' && event.data.user) {
-                handleSuccessfulAuth(event.data.user);
-            }
-        });
     }
     window.openSignInPopup = openSignInPopup;
-    
-    // Check if user is already authenticated
-    function checkAuthStatus() {
-        const user = localStorage.getItem('bastionAuthUser');
-        if (user) {
-            try {
-                const userData = JSON.parse(user);
-                updateUIForLoggedInUser(userData);
-                
-                // If we're not on the dashboard page, redirect there
-                if (!window.location.pathname.includes('/dashboard')) {
-                    // Optional: Only redirect if authentication is recent
-                    const authTimestamp = localStorage.getItem('bastionAuthTimestamp');
-                    const now = new Date().getTime();
-                    
-                    // If auth is less than 30 minutes old, redirect
-                    if (authTimestamp && (now - authTimestamp < 30 * 60 * 1000)) {
-                        window.location.href = '/dashboard';
-                    }
-                }
-            } catch (e) {
-                console.error('Error parsing auth data', e);
-                localStorage.removeItem('bastionAuthUser');
-            }
-        }
-    }
-    
-    // Handle successful authentication
-    function handleSuccessfulAuth(user) {
-        // Store user data in localStorage
-        localStorage.setItem('bastionAuthUser', JSON.stringify(user));
-        localStorage.setItem('bastionAuthTimestamp', new Date().getTime());
-        
-        // Update UI
-        updateUIForLoggedInUser(user);
-        
-        // Redirect to dashboard
-        window.location.href = '/dashboard';
-    }
-    
+
     // Update UI for logged in users
     function updateUIForLoggedInUser(user) {
         const authButtonContainer = document.getElementById('auth-button-container');
@@ -180,11 +145,56 @@
         }
     }
     
-    // Add a function to log out (for completeness)
+    // Log out function
     function logOut() {
         localStorage.removeItem('bastionAuthUser');
         localStorage.removeItem('bastionAuthTimestamp');
-        window.location.href = '/';
+        userSession = {
+            isLoggedIn: false,
+            username: null
+        };
+        
+        // Update UI back to login button
+        const authButtonContainer = document.getElementById('auth-button-container');
+        if (authButtonContainer) {
+            authButtonContainer.innerHTML = `
+                <a
+                    id="login-button"
+                    class="border-2 dark:border-neutral-200 rounded-md px-4 py-2 dark:bg-neutral-200 dark:text-off-black hover:border-white hover:bg-white transition-colors ease-in-out"
+                    href="javascript:void(0)"
+                    onclick="openSignInPopup()"
+                >Log In</a>
+            `;
+        }
     }
     window.logOut = logOut;
+
+    // Listen for authentication messages
+    window.addEventListener('message', (event) => {
+        // Verify origin for security
+        if (event.origin !== window.location.origin) return;
+
+        const msg = event.data;
+        if (msg && msg.type === 'bastion-auth' && msg.status === 'approved') {
+            console.log('🎉 Bastion Auth approved!', msg);
+            
+            // Store user data
+            userSession = {
+                isLoggedIn: true,
+                username: msg.username
+            };
+            
+            // Save to localStorage for persistence
+            localStorage.setItem('bastionAuthUser', JSON.stringify(userSession));
+            localStorage.setItem('bastionAuthTimestamp', new Date().getTime());
+            
+            // Update UI
+            updateUIForLoggedInUser(userSession);
+            
+            // Optional: Redirect to dashboard
+            if (!window.location.pathname.includes('/dashboard')) {
+                window.location.href = '/dashboard';
+            }
+        }
+    });
 </script>
