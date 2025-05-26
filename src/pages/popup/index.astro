@@ -541,6 +541,9 @@
             resetAll();
             showStatus(msg.error || 'User does not exist. Please check your username.', 'error');
             return;
+          case 'approved_signup':
+             //return the username and the email
+             return; 
           case 'approved':
             showStatus('Authentication successful!', 'success');
             if (window.opener && !window.opener.closed) {
@@ -555,7 +558,6 @@
                 window.location.origin
               );
             }
-
             // Close this popup
             setTimeout(() => window.close(), 300);
             return;
@@ -637,3 +639,4 @@
   </script>
 </body>
 </html>
+

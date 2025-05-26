@@ -337,23 +337,19 @@ import MainLayout from "../layouts/MainLayout.astro";
         }
 
         window.addEventListener('message', (event) => {
-            // Verify origin for security
             if (event.origin !== window.location.origin) return;
 
             const msg = event.data;
             if (msg && msg.type === 'bastion-auth' && msg.status === 'approved') {
                 console.log('🎉 Bastion Auth approved!', msg);
                 
-                // Store user data
                 userSession = {
                     isLoggedIn: true,
                     username: msg.username
                 };
                 
-                // Save to localStorage for persistence
                 localStorage.setItem('bastionAuthUser', JSON.stringify(userSession));
                 
-                // Show logged in state
                 showLoggedInState(msg.username);
             }
         });
