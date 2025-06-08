@@ -31,33 +31,47 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 
     <script>
-    window.addEventListener('DOMContentLoaded', () => {
-    var xValues = [50,60,70,80,90,100,110,120,130,140,150];
-    var yValues = [7,8,8,9,9,9,10,11,14,14,15];
 
-    new Chart("usage_chart", {     
-        
-        type: "line",
-        data: {
-            labels: xValues,
-            datasets: [{
-            backgroundColor:"rgba(67, 56, 202, 0)",
-            borderColor: "rgba(67, 56, 202, 0.6)",
-            data: yValues
-            }]
-        },
-        options:{}
+        let usageChart;    
+
+        window.addEventListener('DOMContentLoaded', () => {
+            usageChart = new Chart("usage_chart", {
+            type: "line",
+            data: {
+                labels: [],                
+                datasets: [{
+                backgroundColor:"rgba(67, 56, 202, 0)",
+                borderColor: "rgba(67, 56, 202, 0.6)",
+                data: []                  
+                }]
+            },
+            options: {}
+            });
         });
-    });
-</script>
-    <script>
 
-    const socket = new WebSocket('ws://192.168.1.213:1212');
+        const socket = new WebSocket('ws://192.168.1.213:1212');
+        socket.onmessage = function (event) {
+            const site_data_obj = JSON.parse(event.data);
+
+            document.getElementById("testt").innerHTML =
+            site_data_obj.data.map(row => `
+                <div class="row">
+                <strong>${row.username}</strong>
+                (Request #${row.request_id}, approved: ${row.approved})
+                </div>
+            `).join("");
+
+            const newLabels = site_data_obj.data.map(r => r.req_date_time);
+
+            usageChart.data.labels = newLabels;
+            usageChart.update();
+        };
 
         socket.onopen = function (event) {
             //alert('You are Connected to WebSocket Server');
         };
 
+        /*
         socket.onmessage = function (event) {
             console.log(event.data);
             const site_data_obj = JSON.parse(event.data);
@@ -79,6 +93,7 @@
             console.log(timestamps);
 
         };
+        */
 
         
 
