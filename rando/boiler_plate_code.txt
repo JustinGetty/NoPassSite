@@ -1,7 +1,9 @@
 TODO:
-The widget must hand you a signed credential (e.g. a JWT or JWS) rather than a plain username string
+The widget must hand back a signed credential (e.g. a JWT or JWS) rather than a plain username string
 
 back-end must verify that signature against Bastion’s published public key (or JWK set) before trusting the sub/email and issuing its own session cookie or token
+
+also re-verify token
 
 
 
@@ -9,7 +11,7 @@ back-end must verify that signature against Bastion’s published public key (or
 
 <script
   src="https://cdn.jsdelivr.net/npm/bastion-auth@1.2.3/dist/bastion-auth.umd.js"
-  integrity="sha384-‹YOUR_SRI_HASH›"
+  integrity="sha384-‹SRI_HASH›"
   crossorigin="anonymous">
 </script>
 <script>
@@ -20,14 +22,17 @@ back-end must verify that signature against Bastion’s published public key (or
   });
   window.addEventListener('message', e => {
     if (e.origin !== new URL('https://auth.bastion.com').origin) return;
+    else if (... token != token) TODO
     const { status, user, isNewUser, error } = e.data;
     if (status === 'success') {
       const { username } = user;
       console.log('Authenticated:', username);
       //below are the important parts to the client
       if (isNewUser) {
-        console.log('New signup:', username);
+
+        console.log('New signup:', username, email);
         // EXAMPLE: log this username in your own database, ask user for more details, etc.
+
 
 
 
@@ -35,7 +40,7 @@ back-end must verify that signature against Bastion’s published public key (or
       } else {
         console.log('Welcome back:', username);
         // —> EXAMPLE: you could look up existing profile, etc.
-        
+         
         
       }
 
