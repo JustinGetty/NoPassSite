@@ -40,6 +40,11 @@ import MainLayout from "/src/layouts/MainLayout.astro";
                             <p class="text-gray-500 dark:text-gray-400" id="user-email">
                             </p>
                         </div>
+                        <div>
+                            <!-- PULL SITE INTO FOR USERNAME -->
+                            <div>Your site: </div>
+                            
+                        </div>
                     </div>
                 </div>
                 <div class="border-t border-gray-200 dark:border-gray-700 px-6 py-4 bg-gray-50 dark:bg-gray-900/50">
@@ -58,9 +63,105 @@ import MainLayout from "/src/layouts/MainLayout.astro";
                 </div>
             </div>
 
+            <div class="border-gray-200 px-10 py-10 bg-gray-100">
+                <canvas id="usage_chart" style="width:100%;max-width:700px"></canvas>
+                    <script>
 
-            <h1>going to put sample chart here</h1>
+                        let usageChart;    
+                        
+                        window.addEventListener('DOMContentLoaded', () => {
+
+                            usageChart = new Chart("usage_chart", {
+                            type: "line",
+                            data: {
+                                labels: [],                
+                                    datasets: [{
+                                    label: "Your site usage",
+                                    backgroundColor:"rgba(67, 56, 202, 0)",
+                                    borderColor: "rgba(67, 56, 202, 0.6)",
+                                    data: []                  
+                                }]
+                            },
+                            options: {
+                                legend: {
+                                    display: false
+                                }
+                                
+                            }
+                            });
+                        });
+
+                        const socket = new WebSocket('ws://192.168.1.213:1212');
+                        socket.onmessage = function (event) {
+                            const site_data_obj = JSON.parse(event.data);
+
+                            //reformat the year!!, make years the last two digits
+                            const newLabels = [...new Set(site_data_obj.data.map(
+                                r => `${formatDate(r.req_date_time)[1]}/${formatDate(r.req_date_time)[2]}/${formatDate(r.req_date_time)[0]}`
+                            ))];
+                            
+                            const reqNumDict = {};
+
+                            site_data_obj.data.forEach(r => {
+                            const key = formatDate(r.req_date_time)[2];
+                            //if this date hasn’t been seen yet, start at 0, then add 1
+                            reqNumDict[key] = (reqNumDict[key] || 0) + 1;
+                            });
+                            console.log(reqNumDict);
+
+                            const req_num_array = Object.values(reqNumDict);
+                            console.log(req_num_array);
+                            
+                            usageChart.data.datasets[0].data = req_num_array;
+                            usageChart.data.labels = newLabels;
+                            usageChart.update();
+                        };
+
+                        socket.onopen = function (event) {
+                            //alert('You are Connected to WebSocket Server');
+                            sendMessage();
+                        };
+
+
+                        const updateData = setInterval(sendMessage, 2000);
+                        
+
+                        socket.onclose = function (event) {
+                            console.log('Disconnected from WebSocket server');
+                        };
+
+                        function formatDate(unixTimestamp) {
+                            const date = new Date(unixTimestamp * 1000);
+                            const year = date.getFullYear();
+                            const month = String(date.getMonth() + 1).padStart(2, '0'); 
+                            const day = String(date.getDate()).padStart(2, '0');
+                            const hours = String(date.getHours()).padStart(2, '0');
+                            const minutes = String(date.getMinutes()).padStart(2, '0');
+                            const seconds = String(date.getSeconds()).padStart(2, '0');
+
+                            return [year, month, day, hours, minutes, seconds]
+                            //return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+                        }
+
+                        const unixTime = 1759989600; 
+                        const formattedDate = formatDate(unixTime);
+                        console.log(formattedDate); 
+
+                        function sendMessage() {
+                            const message = "get_chart_data";
+                            socket.send(message);
+                        }
+                    window.sendMessage = sendMessage
+
+                    </script>
+
+            </div>
             
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+            <div class="px-10 py-10 bg-white">
+                <!-- lil gap jawn -->
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
                     <div class="px-6 py-5 border-b border-gray-200 dark:border-gray-700">

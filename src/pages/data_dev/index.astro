@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
+<!-----
+data to pull for dashboard:
+- sort by approved/denied sign ins
+- signups vs signins
+- user signup log
+--- -->
+
 <title>Site Dashboard</title>
 <style>
     html, body { height: 100%; margin: 0; }
@@ -22,10 +29,6 @@
 
     <div class="container">
         <h1>Site Usage</h1>
-        <button onclick="sendMessage()">Send splish</button>
-    </div>
-    <div class="site_data_test">
-        <p id="testt"></p>
     </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
@@ -33,14 +36,14 @@
     <script>
 
         let usageChart;    
-
+        
         window.addEventListener('DOMContentLoaded', () => {
             usageChart = new Chart("usage_chart", {
             type: "line",
             data: {
                 labels: [],                
                     datasets: [{
-                    label: "Your site usage:",
+                    label: "Your site usage",
                     backgroundColor:"rgba(67, 56, 202, 0)",
                     borderColor: "rgba(67, 56, 202, 0.6)",
                     data: []                  
@@ -57,14 +60,6 @@
         const socket = new WebSocket('ws://192.168.1.213:1212');
         socket.onmessage = function (event) {
             const site_data_obj = JSON.parse(event.data);
-
-            document.getElementById("testt").innerHTML =
-            site_data_obj.data.map(row => `
-                <div class="row">
-                <strong>${row.username}</strong>
-                (Request #${row.request_id}, approved: ${row.approved}, date: ${formatDate(row.req_date_time)[2]})
-                </div>
-            `).join("");
 
             //reformat the year!!, make years the last two digits
             const newLabels = [...new Set(site_data_obj.data.map(
@@ -90,32 +85,11 @@
 
         socket.onopen = function (event) {
             //alert('You are Connected to WebSocket Server');
+            sendMessage();
         };
 
-        /*
-        socket.onmessage = function (event) {
-            console.log(event.data);
-            const site_data_obj = JSON.parse(event.data);
 
-            const html = site_data_obj.data
-            .map(row => `
-                <div class="row">
-                <strong>${row.username}</strong>
-                (Request #${row.request_id}, approved: ${row.approved})
-                </div>
-            `)
-            .join("");
-
-            document.getElementById("testt").innerHTML = html;
-
-            const timestamps = site_data_obj.data.map(row => row.req_date_time);
-            xValues = timestamps;
-            
-            console.log(timestamps);
-
-        };
-        */
-
+        const updateData = setInterval(sendMessage, 2000);
         
 
         socket.onclose = function (event) {
