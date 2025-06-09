@@ -40,12 +40,17 @@
             data: {
                 labels: [],                
                     datasets: [{
+                    label: "Your site usage:",
                     backgroundColor:"rgba(67, 56, 202, 0)",
                     borderColor: "rgba(67, 56, 202, 0.6)",
                     data: []                  
                 }]
             },
-            options: {}
+            options: {
+                legend: {
+                    display: false
+                }
+            }
             });
         });
 
@@ -61,7 +66,7 @@
                 </div>
             `).join("");
 
-            //reformat the year
+            //reformat the year!!, make years the last two digits
             const newLabels = [...new Set(site_data_obj.data.map(
                 r => `${formatDate(r.req_date_time)[1]}/${formatDate(r.req_date_time)[2]}/${formatDate(r.req_date_time)[0]}`
             ))];
@@ -70,7 +75,7 @@
 
             site_data_obj.data.forEach(r => {
             const key = formatDate(r.req_date_time)[2];
-            // if this date hasn’t been seen yet, start at 0, then add 1
+            //if this date hasn’t been seen yet, start at 0, then add 1
             reqNumDict[key] = (reqNumDict[key] || 0) + 1;
             });
             console.log(reqNumDict);
