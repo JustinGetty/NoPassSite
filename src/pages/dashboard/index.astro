@@ -3,7 +3,6 @@ import MainLayout from "/src/layouts/MainLayout.astro";
 ---
 
 <MainLayout>
-    <button onclick="sendMessage('check_authentication\{justingetty5\}')">TESTTTT</button>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
         <div class="mt-16 mb-8">
             <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
@@ -267,6 +266,21 @@ import MainLayout from "/src/layouts/MainLayout.astro";
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script>
+
+        // ─── Make socket and sendMessage global ───
+        let socket = null;
+
+        function sendMessage(msg) {
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.send(msg);
+        } else {
+            console.warn("WebSocket not open; cannot send:", msg);
+        }
+        }
+        window.sendMessage = sendMessage;
+        // ──────────────────────────────────────────
+
+
         let usageChart;
         let websocketConnected = false;
         
@@ -278,6 +292,8 @@ import MainLayout from "/src/layouts/MainLayout.astro";
             // Check if user data exists in localStorage
             const userData = localStorage.getItem('bastionAuthUser');
             
+            initializeWebSocket();
+
             if (!userData) {
                 // Show auth required message
                 document.getElementById('auth-required-message').classList.remove('hidden');
@@ -289,7 +305,7 @@ import MainLayout from "/src/layouts/MainLayout.astro";
                     const user = JSON.parse(userData);
                     populateDashboard(user);
                     //checkUserSite(user);
-                    sendMessage(`check_authentication{${user.username}}`)
+                    //sendMessage(`check_authentication{${user.username}}`)
                     console.log(user);
                 } catch (e) {
                     console.error('Error parsing user data', e);
@@ -410,21 +426,27 @@ import MainLayout from "/src/layouts/MainLayout.astro";
         }
         
         function initializeWebSocket() {
-            const socket = new WebSocket('ws://192.168.1.213:1212');
+            socket = new WebSocket('ws://192.168.1.213:1212');
             
-            socket.onopen = function (event) {
+            socket.onopen = function(event) {
                 websocketConnected = true;
                 console.log('Connected to WebSocket server');
+
+                // ► AUTHENTICATE FIRST:
+                const userData = localStorage.getItem('bastionAuthUser');
+                if (userData) {
+                    const user = JSON.parse(userData);
+                    sendMessage(`check_authentication{${user.username}}`);
+                } else {
+                    // show login prompt if no user
+                    document.getElementById('auth-required-message').classList.remove('hidden');
+                }
+
+                // ► THEN FETCH CHART DATA
                 sendMessage("get_chart_data");
-                
-                // Start periodic data updates
-                const updateInterval = setInterval(() => {
-                    if (websocketConnected) {
-                        sendMessage("get_chart_data");
-                    } else {
-                        clearInterval(updateInterval);
-                    }
-                }, 5000); // Update every 5 seconds
+
+                // ► START POLLING
+                setInterval(() => sendMessage("get_chart_data"), 5000);
             };
             
             socket.onmessage = function (event) {
@@ -457,14 +479,15 @@ import MainLayout from "/src/layouts/MainLayout.astro";
                     }
 
                     else if (payload.data_type === "client_data"){
+                        console.log(payload)
                         const userData = localStorage.getItem('bastionAuthUser');
                         const user = JSON.parse(userData);
                         user.site_domain = payload.data.site_domain;
                         user.site_id = payload.data.site_id;
                         user.site_name = payload.data.site_name;
-                        user.spa_id = payload.data.site_id;
+                        user.spa_id = payload.data.spa_id;
                         console.log(user);
-                        if (spa_id === "") {
+                        if (!user.spa_id) {
                             document.getElementById('no-site-message').classList.remove('hidden');
                             document.getElementById('user-site-info').innerHTML = '<span class="text-gray-400 dark:text-gray-500">Not configured</span>';
                         } else {
@@ -472,7 +495,6 @@ import MainLayout from "/src/layouts/MainLayout.astro";
                             document.getElementById('user-site-info').textContent = user.website || user.domain || user.site_url;
                             
                             initializeChart();
-                            initializeWebSocket();
                         }
                     }
 
