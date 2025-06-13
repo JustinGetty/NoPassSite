@@ -3,7 +3,10 @@ import MainLayout from "/src/layouts/MainLayout.astro";
 ---
 
 <MainLayout>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
+    <div>
+        <h2 class="pl-40 text-6xl text-stone-700">Welcome to your site profile!</h2>
+    </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-16">
         <div class="mt-16 mb-8">
             <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
             <p class="mt-2 text-lg text-gray-600 dark:text-gray-300">Welcome to your BastionAuth dashboard</p>
@@ -29,45 +32,159 @@ import MainLayout from "/src/layouts/MainLayout.astro";
         </div>
         
         <div id="dashboard-content" class="hidden">
-            <!-- User Profile Card -->
-            <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden mb-8">
-                <div class="px-6 py-8 sm:p-10">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center">
-                            <div class="h-16 w-16 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-600 dark:text-indigo-300 text-2xl font-bold" id="user-avatar">
-                            </div>
-                            <div class="ml-6">
-                                <h2 class="text-2xl font-bold text-gray-900 dark:text-white" id="welcome-message">
-                                </h2>
-                                <p class="text-gray-500 dark:text-gray-400" id="user-email">
-                                </p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">Your site:</p>
-                            <div id="user-site-info" class="text-lg font-medium text-gray-900 dark:text-white">
-                                <!-- Site info will be populated here -->
-                            </div>
-                        </div>
+            <!-- No Site Message -->
+
+            <!-- Enhanced User Profile Card -->
+<div class="bg-white dark:bg-gray-800 shadow-xl rounded-2xl overflow-hidden mb-8 border border-gray-100 dark:border-gray-700">
+    <!-- Header Section -->
+    <div class="bg-indigo-700 dark:bg-gray-800 px-8 py-6 border-b border-gray-200 dark:border-gray-700">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-6">
+                <!-- Enhanced Avatar -->
+                <div class="relative">
+                    <div class="h-20 w-20 rounded-xl bg-indigo-600 dark:bg-indigo-500 flex items-center justify-center text-white text-3xl font-bold shadow-sm" id="user-avatar">
+                        <!-- Avatar content populated by JS -->
+                    </div>
+                    <div class="absolute -bottom-1 -right-1 h-6 w-6 bg-green-500 rounded-full border-3 border-white dark:border-gray-900 flex items-center justify-center">
+                        <svg class="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
                     </div>
                 </div>
-                <div class="border-t border-gray-200 dark:border-gray-700 px-6 py-4 bg-gray-50 dark:bg-gray-900/50">
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-500 dark:text-gray-400">Last login: <span id="last-login">Today</span></span>
-                        <button 
-                            onclick="logOut()" 
-                            class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                            </svg>
-                            Sign Out
-                        </button>
+                
+                <!-- Welcome Message -->
+                <div class="text-white">
+                    <h2 class="text-3xl font-bold mb-1" id="welcome-message">
+                        <!-- Welcome message populated by JS -->
+                    </h2>
+                    <p class="text-gray-300 dark:text-gray-400 text-lg font-medium" id="user-email">
+                        <!-- Email populated by JS -->
+                    </p>
+                    <div class="flex items-center mt-2 text-sm text-gray-300 dark:text-gray-400">
+                        <svg class="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>Authenticated & Secured</span>
                     </div>
                 </div>
             </div>
+            
+            <!-- Quick Actions -->
+            <div class="flex flex-col space-y-2">
+                <button onclick="logOut()" class="inline-flex items-center px-4 py-2 bg-gray-700 dark:bg-gray-600 border border-gray-600 dark:border-gray-500 text-white font-medium rounded-lg hover:bg-gray-600 dark:hover:bg-gray-500 transition-all duration-200 shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    Sign Out
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Enhanced Details Section -->
+    <div class="px-8 py-6 bg-gray-50 dark:bg-gray-900/50">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Site Information -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+                        <svg class="h-5 w-5 mr-2 text-indigo-600 dark:text-indigo-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4.083 9h1.946c.089-1.546.383-2.97.837-4.118A6.004 6.004 0 004.083 9zM10 2a8 8 0 100 16 8 8 0 000-16zm0 2c-.076 0-.232.032-.465.262-.238.234-.497.623-.737 1.182-.389.907-.673 2.142-.766 3.556h3.936c-.093-1.414-.377-2.649-.766-3.556-.24-.56-.5-.948-.737-1.182C10.232 4.032 10.076 4 10 4zm3.971 5c-.089-1.546-.383-2.97-.837-4.118A6.004 6.004 0 0115.917 9h-1.946zm-2.003 2H8.032c.093 1.414.377 2.649.766 3.556.24.56.5.948.737 1.182.233.23.389.262.465.262.076 0 .232-.032.465-.262.238-.234.498-.623.737-1.182.389-.907.673-2.142.766-3.556zm1.166 4.118c.454-1.147.748-2.572.837-4.118h1.946a6.004 6.004 0 01-2.783 4.118zm-6.268 0C6.412 13.97 6.118 12.546 6.03 11H4.083a6.004 6.004 0 002.783 4.118z" clip-rule="evenodd"/>
+                        </svg>
+                        Site Details
+                    </h3>
+                    <div class="flex items-center">
+                        <div class="h-2 w-2 bg-green-400 rounded-full mr-2"></div>
+                        <span class="text-xs text-green-600 dark:text-green-400 font-medium">Active</span>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <div>
+                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Domain</label>
+                        <p class="text-sm font-mono text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg mt-1" id="user-site-domain">
+                            Loading...
+                        </p>
+                    </div>
+                    <div>
+                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Site Name</label>
+                        <p class="text-sm font-mono text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg mt-1" id="user-site-name">
+                            Loading...
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Technical Information -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="h-5 w-5 mr-2 text-purple-600 dark:text-purple-400"
+                            viewBox="0 0 20 20"
+                            fill="currentColor" aria-hidden="true">
+                        <path d="M12.293 7.293a1 1 0 011.414 0l2 2a4 4 0 010 5.657l-2.002 2.002a4 4 0 01-5.657 0l-.758-.758a1 1 0 011.414-1.414l.758.758a2 2 0 002.829 0l2.002-2.002a2 2 0 000-2.829l-2-2a1 1 0 010-1.414zm-4.586 5.414a1 1 0 01-1.414 0l-2-2a4 4 0 010-5.657l2.002-2.002a4 4 0 015.657 0l.758.758a1 1 0 11-1.414 1.414l-.758-.758a2 2 0 00-2.829 0L4.879 7.879a2 2 0 000 2.829l2 2a1 1 0 010 1.414z"/>
+                        </svg>
 
-            <!-- No Site Message -->
+                        Integration
+                    </h3>
+                    <div class="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs font-medium rounded-full">
+                        API v2.1
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <div>
+                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Site ID</label>
+                        <p class="text-sm font-mono text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg mt-1" id="user-site-id">
+                            Loading...
+                        </p>
+                    </div>
+                    <div>
+                        <label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">SPA ID</label>
+                        <p class="text-sm font-mono text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg mt-1" id="user-spa-id">
+                            Loading...
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Account Status -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+                        <svg class="h-5 w-5 mr-2 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 1L5 6v3h10V6l-5-5zM6 19h8v-7H6v7z" clip-rule="evenodd"/>
+                            <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        Security Status
+                    </h3>
+                    <div class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs font-medium rounded-full">
+                        Verified
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600 dark:text-gray-300">Last Login</span>
+                        <span class="text-sm font-medium text-gray-900 dark:text-white" id="last-login">Today</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600 dark:text-gray-300">Auth Method</span>
+                        <span class="text-sm font-medium text-indigo-600 dark:text-indigo-400">Passwordless</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <!-- change this to active if websocket is connected!! TODO -->
+                        <span class="text-sm text-gray-600 dark:text-gray-300">Session Status</span>
+                        <div class="flex items-center">
+                            <div class="h-2 w-2 bg-green-400 rounded-full mr-2"></div>
+                            <span class="text-sm font-medium text-green-600 dark:text-green-400">Active</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
             <div id="no-site-message" class="hidden bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-8 mb-8">
                 <div class="text-center">
                     <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 dark:bg-blue-900 mb-4">
@@ -300,6 +417,7 @@ import MainLayout from "/src/layouts/MainLayout.astro";
             } else {
                 // Show dashboard content and populate with user data
                 document.getElementById('dashboard-content').classList.remove('hidden');
+                initializeChart();
                 
                 try {
                     const user = JSON.parse(userData);
@@ -315,8 +433,9 @@ import MainLayout from "/src/layouts/MainLayout.astro";
                 }
             }
         }
-        
+
         function populateDashboard(user) {
+    // Existing avatar and welcome message
             const userAvatar = document.getElementById('user-avatar');
             if (userAvatar) {
                 userAvatar.textContent = user.username ? user.username.charAt(0).toUpperCase() : 'U';
@@ -324,14 +443,82 @@ import MainLayout from "/src/layouts/MainLayout.astro";
             
             const welcomeMessage = document.getElementById('welcome-message');
             if (welcomeMessage) {
-                welcomeMessage.textContent = `Welcome, ${user.username || 'User'}!`;
+                welcomeMessage.textContent = `Welcome back, ${user.username || 'User'}`;
             }
 
             const userEmail = document.getElementById('user-email');
             if (userEmail) {
-                userEmail.textContent = user.email || '';
+                userEmail.textContent = user.email || 'No email provided';
+            }
+            
+            // Populate site details (these will be updated via WebSocket)
+            const siteDomain = document.getElementById('user-site-domain');
+            if (siteDomain) {
+                siteDomain.textContent = user.site_domain || 'Not configured';
+            }
+            
+            const siteName = document.getElementById('user-site-name');
+            if (siteName) {
+                siteName.textContent = user.site_name || 'Not configured';
+            }
+            
+            const siteId = document.getElementById('user-site-id');
+            if (siteId) {
+                siteId.textContent = user.site_id || 'Not assigned';
+            }
+            
+            const spaId = document.getElementById('user-spa-id');
+            if (spaId) {
+                spaId.textContent = user.spa_id || 'Not assigned';
             }
         }
+
+// Enhanced WebSocket message handler (add this to your existing handler)
+function handleClientData(payload) {
+    const userData = localStorage.getItem('bastionAuthUser');
+    if (userData) {
+        const user = JSON.parse(userData);
+        
+        // Update user object with new data
+        user.site_domain = payload.data.site_domain;
+        user.site_id = payload.data.site_id;
+        user.site_name = payload.data.site_name;
+        user.spa_id = payload.data.spa_id;
+        
+        // Save updated user data
+        localStorage.setItem('bastionAuthUser', JSON.stringify(user));
+        
+        // Update the UI with enhanced details
+        const siteDomain = document.getElementById('user-site-domain');
+        if (siteDomain) {
+            siteDomain.textContent = user.site_domain || 'Not configured';
+        }
+        
+        const siteName = document.getElementById('user-site-name');
+        if (siteName) {
+            siteName.textContent = user.site_name || 'Not configured';
+        }
+        
+        const siteId = document.getElementById('user-site-id');
+        if (siteId) {
+            siteId.textContent = user.site_id || 'Not assigned';
+        }
+        
+        const spaId = document.getElementById('user-spa-id');
+        if (spaId) {
+            spaId.textContent = user.spa_id || 'Not assigned';
+        }
+        
+        // Show/hide sections based on configuration - but don't initialize chart here
+        if (!user.spa_id) {
+            document.getElementById('no-site-message')?.classList.remove('hidden');
+        } else {
+            document.getElementById('site-analytics')?.classList.remove('hidden');
+            // Chart should already be initialized when site-analytics section exists
+        }
+    }
+}
+        
         
         function checkUserSite(user) {
             //const hasSite = user.website || user.domain || user.site_url;
@@ -456,26 +643,19 @@ import MainLayout from "/src/layouts/MainLayout.astro";
                         const site_data_obj = JSON.parse(event.data);
 
                         //reformat the year!!, make years the last two digits
-                        const newLabels = [...new Set(site_data_obj.data.map(
-                            r => `${formatDate(r.req_date_time)[1]}/${formatDate(r.req_date_time)[2]}/${formatDate(r.req_date_time)[0]}`
-                        ))];
-                        
-                        const reqNumDict = {};
-
-                        site_data_obj.data.forEach(r => {
-                        const key = formatDate(r.req_date_time)[2];
-                        //if this date hasn’t been seen yet, start at 0, then add 1
-                        reqNumDict[key] = (reqNumDict[key] || 0) + 1;
-                        });
-                        console.log(reqNumDict);
-
-                        const req_num_array = Object.values(reqNumDict);
-                        console.log(req_num_array);
-                        
-                        usageChart.data.datasets[0].data = req_num_array;
-                        usageChart.data.labels = newLabels;
-                        usageChart.update('none');
+                        const totals = {};          // { '06/11/25': count }
                     
+                        site_data_obj.data.forEach(r => {
+                            const [year, month, day] = formatDate(r.req_date_time);   // year is a number
+                            const label = `${month}/${day}/${year.toString().slice(-2)}`; // mm/dd/yy
+                            totals[label] = (totals[label] || 0) + 1;
+                        });
+                    
+                        const labelsInOrder = Object.keys(totals);          // insertion order == chrono order
+                    
+                        usageChart.data.labels          = labelsInOrder;
+                        usageChart.data.datasets[0].data = labelsInOrder.map(l => totals[l]);
+                        usageChart.update('none');      // redraw with new data
                     }
 
                     else if (payload.data_type === "client_data"){
@@ -487,13 +667,14 @@ import MainLayout from "/src/layouts/MainLayout.astro";
                         user.site_name = payload.data.site_name;
                         user.spa_id = payload.data.spa_id;
                         console.log(user);
+
+                        populateDashboard(user);
                         if (!user.spa_id) {
                             document.getElementById('no-site-message').classList.remove('hidden');
                             document.getElementById('user-site-info').innerHTML = '<span class="text-gray-400 dark:text-gray-500">Not configured</span>';
                         } else {
                             document.getElementById('site-analytics').classList.remove('hidden');
                             document.getElementById('user-site-info').textContent = user.website || user.domain || user.site_url;
-                            
                             initializeChart();
                         }
                     }
@@ -525,6 +706,7 @@ import MainLayout from "/src/layouts/MainLayout.astro";
             };
             
             function sendMessage(message) {
+                console.log(`Sending message: ${message}`);
                 if (socket.readyState === WebSocket.OPEN) {
                     socket.send(message);
                 }
